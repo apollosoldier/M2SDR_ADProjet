@@ -171,8 +171,8 @@ public class NaimiTrehel extends Algorithm {
 			}
 		} else {
 			ReqMessage rm = new ReqMessage(p);
-			System.out.println("Process " + procId + " send REQ to " + p);
-			boolean sent = sendTo( neighborDoors[p], rm );
+			System.out.println("Process " + procId + " send REQ to " + owner);
+			boolean sent = sendTo( neighborDoors[owner], rm );
 		}
 
 		displayState();

@@ -12,5 +12,7 @@
 hs_err_pid*
 
 bin/
+lib/
+Networks/
 .settings/
 .project
