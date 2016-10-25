@@ -4,6 +4,10 @@ import visidia.simulation.process.messages.Message;
 
 public class HeyMessage extends Message {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1946016157175197162L;
 	int proc;
 
 	public HeyMessage( int p ) {

@@ -3,8 +3,6 @@ package naimiTrehel;
 import messages.HeyMessage;
 import messages.ReqMessage;
 import messages.TokenMessage;
-//Visidia imports
-import visidia.simulation.process.algorithm.Algorithm;
 import visidia.simulation.process.messages.Door;
 import visidia.simulation.process.messages.Message;
 
@@ -34,7 +32,6 @@ public class ReceptionRules extends Thread {
 				ReqMessage rm = (ReqMessage) m;
 				algo.receiveREQ( rm.getMsgProc(), door );
 			} else if ( m instanceof TokenMessage ) {
-				TokenMessage tm = (TokenMessage) m;
 				algo.receiveTOKEN(  );
 			} else {
 				System.out.println("Error message type");

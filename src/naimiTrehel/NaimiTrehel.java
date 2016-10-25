@@ -1,9 +1,6 @@
 package naimiTrehel;
 
 
-//Java imports
-import java.util.Queue;
-import java.util.LinkedList;
 import java.util.Random;
 
 import frame.DisplayFrame;
@@ -16,6 +13,11 @@ import visidia.simulation.process.messages.Door;
 import visidia.simulation.process.messages.Message;
 
 public class NaimiTrehel extends Algorithm {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5664520777140308746L;
 
 	// Higher speed means lower simulation speed
 	int speed = 4;
@@ -83,7 +85,7 @@ public class NaimiTrehel extends Algorithm {
 		
 		for (int i = 0; i<nbNeighbors; i++) {
 				HeyMessage hm = new HeyMessage(procId);
-				boolean sent = sendTo(i, hm);
+				sendTo(i, hm);
 		}
 
 		// Display initial state
@@ -103,9 +105,9 @@ public class NaimiTrehel extends Algorithm {
 			// Try to access critical section
 			waitForCritical = true;
 			askForCritical();
-			waitForCritical = false;
 			SC = true;
-
+			waitForCritical = false;
+			
 			displayState();
 
 			// Simulate critical resource use
@@ -135,14 +137,12 @@ public class NaimiTrehel extends Algorithm {
 	// Rule 2 : ask for critical section
 	synchronized void askForCritical() {
 		
-		waitForCritical = true;
-		
 		if ( owner != -1 ) {
 
 			ReqMessage rm = new ReqMessage(procId);
 			
 			System.out.println("Process " + procId + " send REQ to " + owner);
-			boolean sent = sendTo( neighborDoors[owner], rm );
+			sendTo( neighborDoors[owner], rm );
 			
 			owner = -1;
 			
@@ -164,16 +164,16 @@ public class NaimiTrehel extends Algorithm {
 				next = p;
 			} else {
 				AJ = false;
-				owner = p;
 				TokenMessage tm = new TokenMessage();
 				System.out.println("Process " + procId + " send TOKEN to " + p);
-				boolean sent = sendTo(neighborDoors[p], tm);
+				sendTo(neighborDoors[p], tm);
 			}
 		} else {
 			ReqMessage rm = new ReqMessage(p);
 			System.out.println("Process " + procId + " send REQ to " + owner);
-			boolean sent = sendTo( neighborDoors[owner], rm );
+			sendTo( neighborDoors[owner], rm );
 		}
+		owner = p;
 
 		displayState();
 
@@ -195,12 +195,12 @@ public class NaimiTrehel extends Algorithm {
 		SC = false;
 		
 		if (next != -1) {
+			AJ = false;
 			TokenMessage tm = new TokenMessage();
 			System.out.println("Process " + procId + " send TOKEN to " + next);
-			boolean sent = sendTo(neighborDoors[next], tm);
-			
-			AJ = false;
+			sendTo(neighborDoors[next], tm);
 			next = -1;
+			
 		}
 		
 		displayState();
