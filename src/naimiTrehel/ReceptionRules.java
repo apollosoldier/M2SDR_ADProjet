@@ -15,6 +15,7 @@ public class ReceptionRules extends Thread {
 
 		algo = a;
 	}
+	
 
 	public void run() {
 

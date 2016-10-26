@@ -1,12 +1,12 @@
 package naimiTrehel;
 
-
 import java.util.Random;
 
 import frame.DisplayFrame;
 import messages.HeyMessage;
 import messages.ReqMessage;
 import messages.TokenMessage;
+import naimiTrehel.ReceptionRules;
 //Visidia imports
 import visidia.simulation.process.algorithm.Algorithm;
 import visidia.simulation.process.messages.Door;
@@ -70,7 +70,7 @@ public class NaimiTrehel extends Algorithm {
 		System.out.println("Process " + procId + " as " + nbNeighbors 
 				+ " neighbors");	
 
-		rr = new ReceptionRules( this );
+		ReceptionRules rr = new ReceptionRules( this );
 		rr.start();
 
 		neighborDoors = new int[nbNeighbors+1];
