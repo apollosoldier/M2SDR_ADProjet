@@ -8,16 +8,23 @@ public class HeyMessage extends Message {
 	 * 
 	 */
 	private static final long serialVersionUID = 1946016157175197162L;
+	
 	int proc;
+	int nbNeighbourgh;
 
-	public HeyMessage( int p ) {
+	public HeyMessage( int p, int nbNeighbourgh ) {
 
-		proc = p;
+		this.proc = p;
+		this.nbNeighbourgh = nbNeighbourgh;
 	}
 
 	public int getMsgProc() {
 
 		return proc;
+	}
+
+	public int getMsgNbNeighbourgh() {
+		return nbNeighbourgh;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class ReqMessage extends Message {
 
 	public ReqMessage( int p ) {
 
-		proc = p;
+		this.proc = p;
 	}
 
 	public int getMsgProc() {

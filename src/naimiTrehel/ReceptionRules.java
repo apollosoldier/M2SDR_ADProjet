@@ -13,7 +13,7 @@ public class ReceptionRules extends Thread {
 
 	public ReceptionRules( NaimiTrehel a ) {
 
-		algo = a;
+		this.algo = a;
 	}
 	
 
@@ -28,7 +28,7 @@ public class ReceptionRules extends Thread {
 
 			if ( m instanceof HeyMessage) { 
 				HeyMessage hm = (HeyMessage) m;
-				algo.receiveHEY( hm.getMsgProc(), door );
+				algo.receiveHEY( hm.getMsgProc(), door, hm.getMsgNbNeighbourgh());
 			} else if ( m instanceof ReqMessage ) {
 				ReqMessage rm = (ReqMessage) m;
 				algo.receiveREQ( rm.getMsgProc(), door );

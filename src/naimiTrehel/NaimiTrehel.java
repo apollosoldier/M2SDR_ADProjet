@@ -1,5 +1,9 @@
 package naimiTrehel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import frame.DisplayFrame;
@@ -25,7 +29,10 @@ public class NaimiTrehel extends Algorithm {
 	// All nodes data
 	int procId;
 	int nbNeighbors;
-	int[] neighborDoors;
+	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>();
+	
+	int moreConnectedNeighbourgh;
+	int moreConnectedNeighbourghNbNeighbourghs;
 	
 	/** identifiant du site cense posseder le jeton**/
 	int owner = -1;
@@ -73,19 +80,12 @@ public class NaimiTrehel extends Algorithm {
 		ReceptionRules rr = new ReceptionRules( this );
 		rr.start();
 
-		neighborDoors = new int[nbNeighbors+1];
-
 		// Set initial token
 		if ( procId == 0 ) {
 			AJ = true;
 			owner = -1;
 		} else {
 			owner = 0;
-		}
-		
-		for (int i = 0; i<nbNeighbors; i++) {
-				HeyMessage hm = new HeyMessage(procId);
-				sendTo(i, hm);
 		}
 
 		// Display initial state
@@ -129,9 +129,13 @@ public class NaimiTrehel extends Algorithm {
 	//-------------------
 
 	// Rule 1 : init
-	synchronized void receiveHEY(int p, int d) {
+	synchronized void receiveHEY(int p, int d, int nbNeighbourghSender) {
 		System.out.println("Process " + procId + " reveiced HEY from " + p);
-		neighborDoors[p] = d;
+		neighborDoors.put(p, d);
+		if (moreConnectedNeighbourghNbNeighbourghs<nbNeighbourghSender && moreConnectedNeighbourgh < p) {
+			moreConnectedNeighbourgh = p;
+			moreConnectedNeighbourghNbNeighbourghs = nbNeighbourghSender;
+		}
 	}
 
 	// Rule 2 : ask for critical section
@@ -142,7 +146,7 @@ public class NaimiTrehel extends Algorithm {
 			ReqMessage rm = new ReqMessage(procId);
 			
 			System.out.println("Process " + procId + " send REQ to " + owner);
-			sendTo( neighborDoors[owner], rm );
+			sendTo( neighborDoors.get(owner), rm );
 			
 			owner = -1;
 			
@@ -166,12 +170,12 @@ public class NaimiTrehel extends Algorithm {
 				AJ = false;
 				TokenMessage tm = new TokenMessage();
 				System.out.println("Process " + procId + " send TOKEN to " + p);
-				sendTo(neighborDoors[p], tm);
+				sendTo(neighborDoors.get(p), tm);
 			}
 		} else {
 			ReqMessage rm = new ReqMessage(p);
 			System.out.println("Process " + procId + " send REQ to " + owner);
-			sendTo( neighborDoors[owner], rm );
+			sendTo( neighborDoors.get(owner), rm );
 		}
 		owner = p;
 
@@ -198,7 +202,7 @@ public class NaimiTrehel extends Algorithm {
 			AJ = false;
 			TokenMessage tm = new TokenMessage();
 			System.out.println("Process " + procId + " send TOKEN to " + next);
-			sendTo(neighborDoors[next], tm);
+			sendTo(neighborDoors.get(next), tm);
 			next = -1;
 			
 		}

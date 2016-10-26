@@ -2,7 +2,7 @@
 Projet de cours d'algorithme distribués visant à simuler un système distribué sur le simulateur Visidia avec l'algorithme de Naimi-Tréhel
 
 
-A faire : 
+Tasks list : 
 - [x] implémentation de l’algorithme de Naimi-Tréhel sur le simulateur ViSiDiA
 	- [x] reception rules
 	- [x] messages
@@ -19,7 +19,6 @@ A faire :
 		- [ ] quand on reçoit REQ(k)
 			- idées : 
 				-faire remonter HEY jusqu'à retourner à l'origine de REQ(k) en changeant l'owner
-				-  
 		- [ ] quand on sort de SC, il n'est pas forcément nécessaire de repasser à -1, peut-être que l'on peut choisir l'owner judicieusement
 
 
