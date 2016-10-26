@@ -1,6 +1,7 @@
 package naimiTrehel;
 
 import messages.HeyMessage;
+import messages.LeaderMessage;
 import messages.ReqMessage;
 import messages.TokenMessage;
 import visidia.simulation.process.messages.Door;
@@ -26,9 +27,12 @@ public class ReceptionRules extends Thread {
 			Message m = algo.recoit(d);
 			int door = d.getNum();
 
-			if ( m instanceof HeyMessage) { 
+			if ( m instanceof LeaderMessage) { 
+				HeyMessage lm = (HeyMessage) m;
+				algo.receiveLeader( lm.getMsgProc(), door, lm.getMsgNbNeighbors());
+			} else if ( m instanceof HeyMessage) { 
 				HeyMessage hm = (HeyMessage) m;
-				algo.receiveHEY( hm.getMsgProc(), door, hm.getMsgNbNeighbourgh());
+				algo.receiveHEY( hm.getMsgProc(), door, hm.getMsgNbNeighbors());
 			} else if ( m instanceof ReqMessage ) {
 				ReqMessage rm = (ReqMessage) m;
 				algo.receiveREQ( rm.getMsgProc(), door );

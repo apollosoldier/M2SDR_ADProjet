@@ -2,17 +2,16 @@ package messages;
 
 import visidia.simulation.process.messages.Message;
 
-public class HeyMessage extends Message {
-
+public class LeaderMessage extends Message {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1946016157175197162L;
-	
+	private static final long serialVersionUID = 3352001379692674251L;
 	int proc;
 	int nbNeighbors;
 
-	public HeyMessage( int p, int nbNeighbors ) {
+	public LeaderMessage( int p, int nbNeighbors ) {
 
 		this.proc = p;
 		this.nbNeighbors = nbNeighbors;
@@ -44,5 +43,5 @@ public class HeyMessage extends Message {
 
 		return this.toString();
 	}
-
+	
 }

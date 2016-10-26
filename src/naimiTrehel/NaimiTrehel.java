@@ -1,16 +1,12 @@
 package naimiTrehel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import frame.DisplayFrame;
 import messages.HeyMessage;
 import messages.ReqMessage;
 import messages.TokenMessage;
-import naimiTrehel.ReceptionRules;
 //Visidia imports
 import visidia.simulation.process.algorithm.Algorithm;
 import visidia.simulation.process.messages.Door;
@@ -31,7 +27,7 @@ public class NaimiTrehel extends Algorithm {
 	int nbNeighbors;
 	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>();
 	
-	int moreConnectedNeighbourgh;
+	int moreConnectedNeighbourgh = -1;
 	int moreConnectedNeighbourghNbNeighbourghs;
 	
 	/** identifiant du site cense posseder le jeton**/
@@ -53,6 +49,8 @@ public class NaimiTrehel extends Algorithm {
 	ReceptionRules rr = null;
 	// State display frame
 	DisplayFrame df;
+
+	int nRec;
 
 	public String getDescription() {
 
@@ -82,10 +80,18 @@ public class NaimiTrehel extends Algorithm {
 
 		// Set initial token
 		if ( procId == 0 ) {
+			this.moreConnectedNeighbourgh = procId;
+			for (int i = 0; i<nbNeighbors; i++) {
+				HeyMessage hm = new HeyMessage(procId, this.nbNeighbors);
+				sendTo(i, hm);
+			}
+		} 
+		
+		while (nRec < nbNeighbors) {
+			try { this.wait(); } catch( InterruptedException ie) {}
+		}
+		if (owner == -1) {
 			AJ = true;
-			owner = -1;
-		} else {
-			owner = 0;
 		}
 
 		// Display initial state
@@ -128,14 +134,20 @@ public class NaimiTrehel extends Algorithm {
 	// Rules
 	//-------------------
 
-	// Rule 1 : init
+	// Election rules
 	synchronized void receiveHEY(int p, int d, int nbNeighbourghSender) {
 		System.out.println("Process " + procId + " reveiced HEY from " + p);
 		neighborDoors.put(p, d);
-		if (moreConnectedNeighbourghNbNeighbourghs<nbNeighbourghSender && moreConnectedNeighbourgh < p) {
+		if (moreConnectedNeighbourghNbNeighbourghs<nbNeighbourghSender || moreConnectedNeighbourgh == -1) {
 			moreConnectedNeighbourgh = p;
 			moreConnectedNeighbourghNbNeighbourghs = nbNeighbourghSender;
 		}
+		//TODO
+	}
+	
+	synchronized public void receiveLeader(int msgProc, int door, int msgNbNeighbors) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	// Rule 2 : ask for critical section
@@ -234,4 +246,5 @@ public class NaimiTrehel extends Algorithm {
 
 		df.display( state );
 	}
+	
 }
