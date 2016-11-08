@@ -2,12 +2,8 @@ package messages;
 
 import visidia.simulation.process.messages.Message;
 
+@SuppressWarnings("serial")
 public class ReqMessage extends Message {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1056961464496603947L;
 	
 	int proc;
 	int sender;

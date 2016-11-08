@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import frame.DisplayFrame;
 import messages.HeyMessage;
 import messages.LeaderMessage;
@@ -16,14 +14,10 @@ import visidia.simulation.process.algorithm.Algorithm;
 import visidia.simulation.process.messages.Door;
 import visidia.simulation.process.messages.Message;
 
+@SuppressWarnings("serial")
 public class NaimiTrehel extends Algorithm {
 	
 	private final Integer[] initiators = {0,2,5};
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5664520777140308746L;
 
 	// Higher speed means lower simulation speed
 	int speed = 4;

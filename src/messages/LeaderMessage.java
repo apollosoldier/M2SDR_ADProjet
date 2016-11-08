@@ -2,12 +2,9 @@ package messages;
 
 import visidia.simulation.process.messages.Message;
 
+@SuppressWarnings("serial")
 public class LeaderMessage extends Message {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3352001379692674251L;
 	int proc;
 	int senderProc;
 

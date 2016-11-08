@@ -2,12 +2,8 @@ package messages;
 
 import visidia.simulation.process.messages.Message;
 
+@SuppressWarnings("serial")
 public class TokenMessage extends Message {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8144379619118742474L;
 
 	int target;
 	
