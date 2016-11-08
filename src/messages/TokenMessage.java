@@ -9,19 +9,25 @@ public class TokenMessage extends Message {
 	 */
 	private static final long serialVersionUID = 8144379619118742474L;
 
-	public TokenMessage() {
-
+	int target;
+	
+	public TokenMessage(int target) {
+		this.target = target;
 	}
 
 	@Override
 	public Message clone() {
-		return new TokenMessage();
+		return new TokenMessage(target);
+	}
+
+	public int getTarget() {
+		return target;
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "TOKEN";
+		String r = "TOKEN(" + target + ")";
 		return r;
 	}
 
