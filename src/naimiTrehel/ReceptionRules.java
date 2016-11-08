@@ -28,16 +28,17 @@ public class ReceptionRules extends Thread {
 			int door = d.getNum();
 
 			if ( m instanceof LeaderMessage) { 
-				HeyMessage lm = (HeyMessage) m;
-				algo.receiveLeader( lm.getMsgProc(), door, lm.getMsgNbNeighbors());
+				LeaderMessage lm = (LeaderMessage) m;
+				algo.receiveLeader( lm.getMsgProc(), lm.getSenderProc(), door);
 			} else if ( m instanceof HeyMessage) { 
 				HeyMessage hm = (HeyMessage) m;
-				algo.receiveHEY( hm.getMsgProc(), door, hm.getMsgNbNeighbors());
+				algo.receiveHEY( hm.getMsgProc(), hm.getSenderProc(), door);//TODO sender?
 			} else if ( m instanceof ReqMessage ) {
 				ReqMessage rm = (ReqMessage) m;
-				algo.receiveREQ( rm.getMsgProc(), door );
+				algo.receiveREQ( rm.getMsgProc(), rm.getSender(), door );
 			} else if ( m instanceof TokenMessage ) {
-				algo.receiveTOKEN(  );
+				TokenMessage t = (TokenMessage) m;
+				algo.receiveTOKEN( t.getTarget() );
 			} else {
 				System.out.println("Error message type");
 			}

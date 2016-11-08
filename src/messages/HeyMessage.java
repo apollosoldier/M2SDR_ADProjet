@@ -10,12 +10,16 @@ public class HeyMessage extends Message {
 	private static final long serialVersionUID = 1946016157175197162L;
 	
 	int proc;
-	int nbNeighbors;
+	int senderProc;
 
-	public HeyMessage( int p, int nbNeighbors ) {
+	public int getSenderProc() {
+		return senderProc;
+	}
+
+	public HeyMessage( int p , int senderProc) {
 
 		this.proc = p;
-		this.nbNeighbors = nbNeighbors;
+		this.senderProc = senderProc;
 	}
 
 	public int getMsgProc() {
@@ -23,19 +27,16 @@ public class HeyMessage extends Message {
 		return proc;
 	}
 
-	public int getMsgNbNeighbors() {
-		return nbNeighbors;
-	}
 
 	@Override
 	public Message clone() {
-		return new ReqMessage(proc);
+		return new HeyMessage(proc, senderProc);
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "REQ(" + proc + ")";
+		String r = "HEY(" + proc + ")";
 		return r;
 	}
 

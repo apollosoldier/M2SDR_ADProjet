@@ -9,12 +9,15 @@ public class LeaderMessage extends Message {
 	 */
 	private static final long serialVersionUID = 3352001379692674251L;
 	int proc;
-	int nbNeighbors;
+	int senderProc;
 
-	public LeaderMessage( int p, int nbNeighbors ) {
+	public int getSenderProc() {
+		return senderProc;
+	}
 
+	public LeaderMessage( int p , int senderProc) {
 		this.proc = p;
-		this.nbNeighbors = nbNeighbors;
+		this.senderProc = senderProc;
 	}
 
 	public int getMsgProc() {
@@ -22,19 +25,16 @@ public class LeaderMessage extends Message {
 		return proc;
 	}
 
-	public int getMsgNbNeighbors() {
-		return nbNeighbors;
-	}
 
 	@Override
 	public Message clone() {
-		return new ReqMessage(proc);
+		return new LeaderMessage( proc, senderProc );
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "REQ(" + proc + ")";
+		String r = "LEADER(" + proc + ")";
 		return r;
 	}
 
