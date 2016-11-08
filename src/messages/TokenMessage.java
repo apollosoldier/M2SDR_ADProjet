@@ -27,7 +27,7 @@ public class TokenMessage extends Message {
 	@Override 
 	public String toString() {
 
-		String r = "TOKEN";
+		String r = "TOKEN(" + target + ")";
 		return r;
 	}
 

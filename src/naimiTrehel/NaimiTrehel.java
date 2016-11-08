@@ -1,29 +1,24 @@
 package naimiTrehel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import frame.DisplayFrame;
 import messages.HeyMessage;
 import messages.LeaderMessage;
 import messages.ReqMessage;
 import messages.TokenMessage;
-import visidia.graph.Edge;
-import visidia.graph.Vertex;
-import visidia.misc.property.VisidiaProperty;
-import visidia.simulation.Console;
-import visidia.simulation.SimulationConstants.SimulationStatus;
-import visidia.simulation.command.CommandListener;
-import visidia.simulation.evtack.VisidiaAck;
-import visidia.simulation.evtack.VisidiaEvent;
-import visidia.simulation.process.ProcessType;
 //Visidia imports
 import visidia.simulation.process.algorithm.Algorithm;
-import visidia.simulation.process.edgestate.EdgeState;
 import visidia.simulation.process.messages.Door;
 import visidia.simulation.process.messages.Message;
 
 public class NaimiTrehel extends Algorithm {
+	
+	private final Integer[] initiators = {0,2,5};
 
 	/**
 	 * 
@@ -61,8 +56,10 @@ public class NaimiTrehel extends Algorithm {
 	// State display frame
 	DisplayFrame df;
 
-	int leaderReceived;
-	int heyReceived;
+	int leaderReceived = 0;
+	int heyReceived = 0;
+
+	HashMap<Integer, Integer> tokenDirections = new HashMap<Integer, Integer>();
 
 	public String getDescription() {
 
@@ -91,7 +88,7 @@ public class NaimiTrehel extends Algorithm {
 		rr.start();
 
 		// Set initial token
-		if ( procId == 0 || procId == 5) {
+		if ( Arrays.asList(initiators).contains(procId) ) {
 			activeElec = procId;
 			for (int i = 0; i<nbNeighbors; i++) {
 				HeyMessage hm = new HeyMessage(procId, procId);
@@ -230,12 +227,11 @@ public class NaimiTrehel extends Algorithm {
 
 		System.out.println("Process " + procId + " reveiced REQ from " + p);
 
-		//TODO sent to the right one and choose the right owner
-
 		boolean isNeighbor = neighborDoors.containsKey(p);
 
 		if (owner == -1) {
 			if (SC == true || waitForCritical == true) {
+				tokenDirections.put(p, d);
 				next = p;
 			} else {
 				AJ = false;
@@ -245,6 +241,7 @@ public class NaimiTrehel extends Algorithm {
 						isNeighbor ? p : senderProc), tm);
 			}
 		} else {
+			tokenDirections.put(p, d);
 			ReqMessage rm = new ReqMessage(p, procId);
 			System.out.println("Process " + procId + " send REQ(" + p + ") to " + owner);
 			sendTo( neighborDoors.get(owner), rm );
@@ -263,11 +260,9 @@ public class NaimiTrehel extends Algorithm {
 			displayState();
 			this.notify();
 		} else {
-			TokenMessage t = new TokenMessage(p);
-			sendTo(
-					neighborDoors.containsKey(p)?
-							neighborDoors.get(p):
-								neighborDoors.get(owner), t);
+			int tokenDirection = neighborDoors.containsKey(p) ? neighborDoors.get(p) : tokenDirections.get(p);
+			TokenMessage tm = new TokenMessage(p);
+			sendTo(tokenDirection, tm);
 		}
 
 
@@ -284,7 +279,7 @@ public class NaimiTrehel extends Algorithm {
 			System.out.println("Process " + procId + " send TOKEN to " + next);
 			sendTo(neighborDoors.containsKey(next)?
 					neighborDoors.get(next):
-						neighborDoors.get(owner), tm);
+						tokenDirections.get(next), tm);
 			next = -1;
 
 		}
