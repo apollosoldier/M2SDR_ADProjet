@@ -25,7 +25,7 @@ public class NaimiTrehel extends Algorithm {
 	// All nodes data
 	int procId;
 	int nbNeighbors;
-	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>();
+	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>(nbNeighbors+1, 1);
 
 	int father = -1;
 	int activeElec = -1;
@@ -257,6 +257,7 @@ public class NaimiTrehel extends Algorithm {
 			int tokenDirection = neighborDoors.containsKey(p) ? neighborDoors.get(p) : tokenDirections.get(p);
 			TokenMessage tm = new TokenMessage(p);
 			sendTo(tokenDirection, tm);
+			tokenDirections.remove(p);//clean memory of p
 		}
 
 
