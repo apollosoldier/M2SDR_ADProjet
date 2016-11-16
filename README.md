@@ -16,3 +16,6 @@ L'algorithme d'élection est l'algorithme d'élection par extinction qui permet 
 - un processus va diffuser l'id qu'il reçoit que s'il n'a pas reçu de numéro d'id plus important avant
 - lorsqu'un processus initiateur reçoit un message de la part de tout ces voisins avec son id, alors il sait qu'il est le leader. Il diffuse le message leader avec son id sur le réseau pour informer tout le monde. 
 - lorsqu'un processus apprend pour la première fois qui est le leader, il enregistre celui-ci comme son owner s'ils sont voisins, et sinon celui qui lui a envoeyr l'information comme son owner. 
+
+
+![Image of the simulator Visidia while using Naimi-Tréhel algorithm](https://github.com/JulienPerrin/M2SDR_ADProjet/blob/master/VisidiaNaimiTrehel.png)
