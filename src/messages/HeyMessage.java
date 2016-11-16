@@ -5,34 +5,34 @@ import visidia.simulation.process.messages.Message;
 @SuppressWarnings("serial")
 public class HeyMessage extends Message {
 	
-	int proc;
+	int value;
 	int senderProc;
 
-	public int getSenderProc() {
+	public int getSender() {
 		return senderProc;
 	}
 
-	public HeyMessage( int p , int senderProc) {
+	public HeyMessage( int value , int senderProc) {
 
-		this.proc = p;
+		this.value = value;
 		this.senderProc = senderProc;
 	}
 
-	public int getMsgProc() {
+	public int getValue() {
 
-		return proc;
+		return value;
 	}
 
 
 	@Override
 	public Message clone() {
-		return new HeyMessage(proc, senderProc);
+		return new HeyMessage(value, senderProc);
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "HEY(" + proc + ")";
+		String r = "HEY(" + value + ")";
 		return r;
 	}
 

@@ -5,33 +5,33 @@ import visidia.simulation.process.messages.Message;
 @SuppressWarnings("serial")
 public class LeaderMessage extends Message {
 	
-	int proc;
+	int leader;
 	int senderProc;
 
-	public int getSenderProc() {
+	public int getSender() {
 		return senderProc;
 	}
 
-	public LeaderMessage( int p , int senderProc) {
-		this.proc = p;
+	public LeaderMessage( int leader , int senderProc) {
+		this.leader = leader;
 		this.senderProc = senderProc;
 	}
 
-	public int getMsgProc() {
+	public int getLeader() {
 
-		return proc;
+		return leader;
 	}
 
 
 	@Override
 	public Message clone() {
-		return new LeaderMessage( proc, senderProc );
+		return new LeaderMessage( leader, senderProc );
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "LEADER(" + proc + ")";
+		String r = "LEADER(" + leader + ")";
 		return r;
 	}
 

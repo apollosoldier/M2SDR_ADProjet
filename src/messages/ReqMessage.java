@@ -5,18 +5,18 @@ import visidia.simulation.process.messages.Message;
 @SuppressWarnings("serial")
 public class ReqMessage extends Message {
 	
-	int proc;
+	int requester;
 	int sender;
 
-	public ReqMessage( int p , int sender) {
+	public ReqMessage( int requester , int sender) {
 
-		this.proc = p;
+		this.requester = requester;
 		this.sender = sender;
 	}
 
-	public int getMsgProc() {
+	public int getRequester() {
 
-		return proc;
+		return requester;
 	}
 
 	public int getSender() {
@@ -25,13 +25,13 @@ public class ReqMessage extends Message {
 
 	@Override
 	public Message clone() {
-		return new ReqMessage(proc, sender);
+		return new ReqMessage(requester, sender);
 	}
 
 	@Override 
 	public String toString() {
 
-		String r = "REQ(" + proc + ")";
+		String r = "REQ(" + requester + ")";
 		return r;
 	}
 

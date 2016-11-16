@@ -25,17 +25,23 @@ public class NaimiTrehel extends Algorithm {
 	// All nodes data
 	int procId;
 	int nbNeighbors;
-	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>(nbNeighbors+1, 1);
+	HashMap<Integer, Integer> neighborDoors = new HashMap<Integer, Integer>(nbNeighbors*3/2);
 
 	int father = -1;
 	int activeElec = -1;
 
-	/** identifiant du site cense posseder le jeton**/
+	/** identifiant du site cense posseder le jeton ou qui est capable de remonter au jeton downer en owner**/
 	int owner = -1;
 
 	/**identifiant du site a qui envoyer le jeton**/
 	int next = -1;
+	
+	/** nombre de messages HEY(value, sender) recus, tels que value=activeElec, initialise à 0 */
+	int heyReceived = 0;
 
+	/** nombre de messages LEADER(leader, sender) recus, initialise à 0 */
+	int leaderReceived = 0;
+	
 	/** True si le proc a le jeton */
 	boolean AJ = false;
 
@@ -45,16 +51,14 @@ public class NaimiTrehel extends Algorithm {
 	/** True si le proc souhaite entreer ou est en SC */
 	boolean SC = false;
 
+	/** la porte a prendre etant donne une valeur entiere target pour remonter jusqua lorigine dune requete */
+	HashMap<Integer, Integer> tokenDirections = new HashMap<Integer, Integer>();
+
 	// Reception thread
 	ReceptionRules rr = null;
 	// State display frame
-	DisplayFrame df;
-
-	int leaderReceived = 0;
-	int heyReceived = 0;
-
-	HashMap<Integer, Integer> tokenDirections = new HashMap<Integer, Integer>();
-
+	DisplayFrame df; 	
+	
 	public String getDescription() {
 
 		return ("Naimi-Tréhel Token Algorithm for Mutual Exclusion");
@@ -112,6 +116,7 @@ public class NaimiTrehel extends Algorithm {
 			} catch( InterruptedException ie ) {}
 
 			// Try to access critical section
+			System.out.println("Process " + procId + " ask for SC " );
 			waitForCritical = true;
 			askForCritical();
 			SC = true;
@@ -138,28 +143,26 @@ public class NaimiTrehel extends Algorithm {
 	//-------------------
 
 	// Election rules
-	synchronized void receiveHEY(int msgProc, int senderProc, int door) {
-		System.out.println("Process " + procId + " reveiced HEY from " + msgProc);
-		neighborDoors.put(senderProc, door);
-		if (activeElec < msgProc || activeElec == -1) {//aveu de faiblesse
-			activeElec = msgProc;
-			father = neighborDoors.containsKey(msgProc)?msgProc:senderProc;
+	synchronized void receiveHEY(int value, int sender, int door) {
+		//les messages HEY visent a decider qui parmis les processus initiateurs a le plus grand id 
+		System.out.println("Process " + procId + " reveiced HEY(" + value + ") from " + sender);
+		neighborDoors.put(sender, door);
+		if (activeElec < value || activeElec == -1) {//aveu de faiblesse
+			activeElec = value;
+			father = neighborDoors.containsKey(value)?value:sender;
 			heyReceived = 1;
 			if (nbNeighbors == 1) {//cas feuille
-				System.out.println("coucou2 " + heyReceived);
-				HeyMessage hey = new HeyMessage(msgProc, procId);
+				HeyMessage hey = new HeyMessage(value, procId);
 				sendTo(door, hey);
 			} else {//cas noeud
 				for (int i = 0; i<nbNeighbors; i++) {
 					if (i != door) {
-						System.out.println("coucou3 " + heyReceived);
 						HeyMessage hey = new HeyMessage(activeElec, procId);
 						sendTo(i, hey);
 					}
 				}
 			}
-		} else if (msgProc == activeElec) { 
-			System.out.println("coucou4 " + heyReceived);
+		} else if (value == activeElec) { 
 			heyReceived++;
 			if (heyReceived == nbNeighbors) {
 				if (activeElec == procId) {//victoire
@@ -176,22 +179,22 @@ public class NaimiTrehel extends Algorithm {
 		}
 	}
 
-	synchronized public void receiveLeader(int msgProc, int senderProc, int door) {
-		System.out.println("Process " + procId + " reveiced LEADER from " + msgProc);
-		neighborDoors.put(senderProc, door);
-		boolean isNeighbour = neighborDoors.containsKey(msgProc);
+	synchronized public void receiveLeader(int leader, int sender, int door) {
+		System.out.println("Process " + procId + " reveiced LEADER(" + leader + ") from " + sender);
+		neighborDoors.put(sender, door);
+		boolean isNeighbour = neighborDoors.containsKey(leader);
 		
 		if (leaderReceived == 0) {
-			owner = isNeighbour ? msgProc : senderProc;
+			owner = isNeighbour ? leader : sender;
 			for (Integer processNb: neighborDoors.keySet()) {
-				if (processNb != msgProc) {
-					LeaderMessage lm = new LeaderMessage(msgProc, procId);
+				if (processNb != leader) {
+					LeaderMessage lm = new LeaderMessage(leader, procId);
 					sendTo(neighborDoors.get(processNb), lm);
 				}
 			}
 		}
 		if (isNeighbour) {
-			owner = msgProc;
+			owner = leader;
 		}
 		leaderReceived++;
 	}
@@ -203,7 +206,7 @@ public class NaimiTrehel extends Algorithm {
 
 			ReqMessage rm = new ReqMessage(procId, procId);
 
-			System.out.println("Process " + procId + " send REQ to " + owner);
+			System.out.println("Process " + procId + " send REQ(" + procId + ") to " + owner);
 			sendTo( neighborDoors.get(owner), rm );
 
 			owner = -1;
@@ -217,47 +220,46 @@ public class NaimiTrehel extends Algorithm {
 	}
 
 	// Rule 3 : receive REQ( H )
-	synchronized void receiveREQ( int p, int senderProc, int d){
+	synchronized void receiveREQ( int requester, int sender, int d){
 
-		System.out.println("Process " + procId + " reveiced REQ from " + p);
+		System.out.println("Process " + procId + " reveiced REQ(" + requester + ") from " + requester);
 
-		boolean isNeighbor = neighborDoors.containsKey(p);
+		boolean isNeighbor = neighborDoors.containsKey(requester);
 
 		if (owner == -1) {
 			if (SC == true || waitForCritical == true) {
-				tokenDirections.put(p, d);
-				next = p;
+				tokenDirections.put(requester, d);
+				next = requester;
 			} else {
 				AJ = false;
-				TokenMessage tm = new TokenMessage(p);
-				System.out.println("Process " + procId + " send TOKEN to " + p);
+				TokenMessage tm = new TokenMessage(requester);
+				System.out.println("Process " + procId + " send TOKEN(" + requester +")  to " + (isNeighbor ? requester : sender));
 				sendTo(neighborDoors.get(
-						isNeighbor ? p : senderProc), tm);
+						isNeighbor ? requester : sender), tm);
 			}
 		} else {
-			tokenDirections.put(p, d);
-			ReqMessage rm = new ReqMessage(p, procId);
-			System.out.println("Process " + procId + " send REQ(" + p + ") to " + owner);
+			tokenDirections.put(requester, d);
+			ReqMessage rm = new ReqMessage(requester, procId);
 			sendTo( neighborDoors.get(owner), rm );
 		}
-		owner = isNeighbor ? p : senderProc;
+		owner = isNeighbor ? requester : sender;
 
 		displayState();
 
 	}
 
 	// Rule 4 : receive TOKEN
-	synchronized void receiveTOKEN(int p){
-		System.out.println("Process " + procId + " reveiced TOKEN ");
-		if (p==procId) {
+	synchronized void receiveTOKEN(int target){
+		System.out.println("Process " + procId + " reveiced TOKEN(" + target + ") ");
+		if (target==procId) {
 			AJ = true;
 			displayState();
 			this.notify();
 		} else {
-			int tokenDirection = neighborDoors.containsKey(p) ? neighborDoors.get(p) : tokenDirections.get(p);
-			TokenMessage tm = new TokenMessage(p);
+			int tokenDirection = neighborDoors.containsKey(target) ? neighborDoors.get(target) : tokenDirections.get(target);
+			TokenMessage tm = new TokenMessage(target);
 			sendTo(tokenDirection, tm);
-			tokenDirections.remove(p);//clean memory of p
+			tokenDirections.remove(target);//clean memory of p
 		}
 
 

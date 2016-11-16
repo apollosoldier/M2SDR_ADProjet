@@ -29,13 +29,13 @@ public class ReceptionRules extends Thread {
 
 			if ( m instanceof LeaderMessage) { 
 				LeaderMessage lm = (LeaderMessage) m;
-				algo.receiveLeader( lm.getMsgProc(), lm.getSenderProc(), door);
+				algo.receiveLeader( lm.getLeader(), lm.getSender(), door);
 			} else if ( m instanceof HeyMessage) { 
 				HeyMessage hm = (HeyMessage) m;
-				algo.receiveHEY( hm.getMsgProc(), hm.getSenderProc(), door);//TODO sender?
+				algo.receiveHEY( hm.getValue(), hm.getSender(), door);//TODO sender?
 			} else if ( m instanceof ReqMessage ) {
 				ReqMessage rm = (ReqMessage) m;
-				algo.receiveREQ( rm.getMsgProc(), rm.getSender(), door );
+				algo.receiveREQ( rm.getRequester(), rm.getSender(), door );
 			} else if ( m instanceof TokenMessage ) {
 				TokenMessage t = (TokenMessage) m;
 				algo.receiveTOKEN( t.getTarget() );
